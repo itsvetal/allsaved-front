@@ -4,11 +4,12 @@ import {routes} from "./routes/routes.ts";
 import MainLayout from "./components/Layouts/MainLayout/MainLayout.tsx";
 import Dashboard from "./components/Pages/Dashboard/Dashboard.tsx";
 import React from "react";
+import {useAuth} from "./context/AuthContext.tsx";
 
 function App() {
     const ProtectedRoute: React.FC<{children: React.ReactNode}> = ({children}) => {
-        const token = localStorage.getItem('token');
-        return token ? <>{children}</> : <Navigate to={routes.login} replace />;
+        const { isAuth } = useAuth();
+        return isAuth ? <>{children}</> : <Navigate to={routes.login} replace />;
     }
 
     return (
