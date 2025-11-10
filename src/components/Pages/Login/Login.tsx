@@ -1,9 +1,27 @@
-import React from 'react';
-import {Link} from "react-router-dom";
+import React, {useState} from 'react';
+import {Link, useNavigate} from "react-router-dom";
+import {type LoginData, loginUser} from "../../../api/auth.ts";
+import {useAuth} from "../../../context/AuthContext.tsx";
+import {AxiosError} from "axios";
 
 function Login(): React.ReactElement {
 
+    const [form, setForm] = useState<LoginData>({email: '', password: '', loggedIn: false});
+    const navigate = useNavigate();
+    const { login } = useAuth();
 
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        try {
+            const { user, token } = await loginUser(form);
+            login(user, token);
+            navigate('/dashboard');
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                console.error(error.message);
+            }
+        }
+    }
 
     return (
         <div id="auth">
@@ -19,22 +37,45 @@ function Login(): React.ReactElement {
                         <p className="auth-subtitle mb-5">Log in with your data that you entered during
                             registration.</p>
 
-                        <form action="index.html">
+                        <form onSubmit={handleSubmit}>
                             <div className="form-group position-relative has-icon-left mb-4">
-                                <input type="text" className="form-control form-control-xl" placeholder="Email"/>
+                                <input
+                                    type="text"
+                                    className="form-control form-control-xl"
+                                    placeholder="Email"
+                                    value={form.email}
+                                    onChange={(event) => {
+                                        setForm({...form, email: event.target.value})
+                                    }}
+                                />
                                 <div className="form-control-icon">
                                     <i className="bi bi-person"></i>
                                 </div>
                             </div>
                             <div className="form-group position-relative has-icon-left mb-4">
-                                <input type="password" className="form-control form-control-xl" placeholder="Password"/>
+                                <input
+                                    type="password"
+                                    className="form-control form-control-xl"
+                                    placeholder="Password"
+                                    value={form.password}
+                                    onChange={(event) => {
+                                        setForm({...form, password: event.target.value})
+                                    }}
+                                />
                                 <div className="form-control-icon">
                                     <i className="bi bi-shield-lock"></i>
                                 </div>
                             </div>
                             <div className="form-check form-check-lg d-flex align-items-end">
-                                <input className="form-check-input me-2" type="checkbox" value=""
-                                       id="flexCheckDefault"/>
+                                <input
+                                    className="form-check-input me-2"
+                                    type="checkbox"
+                                    checked={form.loggedIn}
+                                    onChange={(event) => {
+                                        setForm({...form, loggedIn: event.target.checked})
+                                    }}
+                                    id="flexCheckDefault"
+                                />
                                 <label className="form-check-label text-gray-600" htmlFor="flexCheckDefault">
                                     Keep me logged in
                                 </label>
