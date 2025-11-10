@@ -1,11 +1,22 @@
-import React, {useState} from 'react';
-import {Link} from "react-router-dom";
+import React from 'react';
+import {Link, useNavigate} from "react-router-dom";
 import {useAuth} from "../../context/AuthContext.tsx";
+import {logoutUser} from "../../api/auth.ts";
 
 function Sidebar(): React.ReactElement {
 
-    const { isAuth, user } = useAuth();
-    const [isOpen, setIsOpen] = useState(false);
+    const { isAuth, user, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+            await logoutUser();
+            logout();
+            navigate('/');
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
+    };
 
     return (
         <>
@@ -58,7 +69,8 @@ function Sidebar(): React.ReactElement {
                                     className="bi bi-x bi-middle"></i></a>
                             </div>
                         </div>
-                        <button className="btn btn-primary btn-block btn-lg shadow-lg text-sm">Logout
+                        <button className="btn btn-primary btn-block btn-lg shadow-lg text-sm" data-bs-toggle="modal"
+                                data-bs-target="#default">Logout
                         </button>
                     </div>
                     <div className="sidebar-menu">
@@ -97,6 +109,41 @@ function Sidebar(): React.ReactElement {
                                 </Link>
                             </li>
                         </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div className="modal fade " id="default" role="dialog"
+                 aria-labelledby="myModalLabel1">
+                <div className="modal-dialog modal-dialog-scrollable" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="myModalLabel1">Basic Modal</h5>
+                            <button type="button" className="close rounded-pill" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                <i data-feather="x"></i>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <p>
+                                Do you really want to leave the profile?
+                            </p>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn" data-bs-dismiss="modal">
+                                <i className="bx bx-x d-block d-sm-none"></i>
+                                <span className="d-none d-sm-block">Close</span>
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn-primary ms-1"
+                                data-bs-dismiss="modal"
+                                onClick={handleLogout}
+                            >
+                                <i className="bx bx-check d-block d-sm-none"></i>
+                                <span className="d-none d-sm-block">Accept</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
