@@ -7,6 +7,7 @@ import React from "react";
 import {useAuth} from "./context/AuthContext.tsx";
 import Login from "./components/Pages/Login/Login.tsx";
 import Register from "./components/Pages/Register/Register.tsx";
+import Profile from "./components/Pages/Profile/Profile.tsx";
 
 function App() {
     const ProtectedRoute: React.FC<{children: React.ReactNode}> = ({children}) => {
@@ -19,7 +20,7 @@ function App() {
             <Routes>
                 <Route path={'/'} element={<MainLayout />}>
                     <Route path={routes.dashboard} element={<Dashboard />} />
-                    <Route path={routes.profile} element={<ProtectedRoute> <h1>Profile</h1> </ProtectedRoute>} />
+                    <Route path={routes.profile} element={<ProtectedRoute> <Profile /> </ProtectedRoute>} />
                     <Route path={routes.login} element={<Login />} />
                     <Route path={routes.register} element={<Register />} />
                     <Route path={routes.settings} element={<h1>Settings</h1>} />
