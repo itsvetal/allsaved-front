@@ -3,6 +3,7 @@ import instance from "./axios.ts";
 export interface LoginData {
     email: string;
     password: string;
+    loggedIn: boolean
 }
 
 export interface RegisterData {
