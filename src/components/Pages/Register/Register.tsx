@@ -1,7 +1,33 @@
-import React from 'react';
-import {Link} from "react-router-dom";
+import React, {useState} from 'react';
+import {Link, useNavigate} from "react-router-dom";
+import {type RegisterData, registerUser} from "../../../api/auth.ts";
+import {useAuth} from "../../../context/AuthContext.tsx";
+import {AxiosError} from "axios";
 
 function Register(): React.ReactElement {
+
+    const [form, setForm] = useState<RegisterData>({
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+    });
+
+    const navigate = useNavigate();
+    const { login } = useAuth();
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        try {
+            const { user, token } = await registerUser(form);
+            login(user, token);
+            navigate('/dashboard');
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                console.error(error.message);
+            }
+        }
+    };
     return (
         <div id="auth">
 
@@ -16,27 +42,51 @@ function Register(): React.ReactElement {
                         <h1 className="auth-title">Sign Up</h1>
                         <p className="auth-subtitle mb-5">Input your data to register to our website.</p>
 
-                        <form action="index.html">
+                        <form onSubmit={handleSubmit}>
                             <div className="form-group position-relative has-icon-left mb-4">
-                                <input type="text" className="form-control form-control-xl" placeholder="Email" />
+                                <input
+                                    type="text"
+                                    className="form-control form-control-xl"
+                                    placeholder="Email"
+                                    value={form.email}
+                                    onChange={(e) => setForm({...form, email: e.target.value})}
+                                />
                                     <div className="form-control-icon">
                                         <i className="bi bi-envelope"></i>
                                     </div>
                             </div>
                             <div className="form-group position-relative has-icon-left mb-4">
-                                <input type="text" className="form-control form-control-xl" placeholder="Username" />
+                                <input
+                                    type="text"
+                                    className="form-control form-control-xl"
+                                    placeholder="Username"
+                                    value={form.name}
+                                    onChange={(e) => setForm({...form, name: e.target.value})}
+                                />
                                     <div className="form-control-icon">
                                         <i className="bi bi-person"></i>
                                     </div>
                             </div>
                             <div className="form-group position-relative has-icon-left mb-4">
-                                <input type="password" className="form-control form-control-xl" placeholder="Password" />
+                                <input
+                                    type="password"
+                                    className="form-control form-control-xl"
+                                    placeholder="Password"
+                                    value={form.password}
+                                    onChange={(e) => setForm({...form, password: e.target.value})}
+                                />
                                     <div className="form-control-icon">
                                         <i className="bi bi-shield-lock"></i>
                                     </div>
                             </div>
                             <div className="form-group position-relative has-icon-left mb-4">
-                                <input type="password" className="form-control form-control-xl" placeholder="Confirm Password" />
+                                <input
+                                    type="password"
+                                    className="form-control form-control-xl"
+                                    placeholder="Confirm Password"
+                                    value={form.password_confirmation}
+                                    onChange={(e) => setForm({...form, password_confirmation: e.target.value})}
+                                />
                                     <div className="form-control-icon">
                                         <i className="bi bi-shield-lock"></i>
                                     </div>

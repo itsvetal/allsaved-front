@@ -1,12 +1,7 @@
 import React, {createContext, useEffect, useState} from 'react';
 import instance from "../api/axios.ts";
 import {AxiosError} from "axios";
-
-interface User {
-    id: number;
-    name: string;
-    email: string;
-}
+import type {User} from "../api/auth.ts";
 
 interface AuthContextType {
     user: User | null;
@@ -30,7 +25,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
 
         try {
             const response = await instance.get('/user');
-            setUser(response.data);
+            setUser(response);
             setIsAuth(true);
         } catch (error) {
             console.error('Error fetching user:', error);

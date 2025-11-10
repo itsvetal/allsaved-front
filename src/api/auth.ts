@@ -13,23 +13,23 @@ export interface RegisterData {
     password_confirmation: string;
 }
 
+export interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+
 export interface AuthResponse {
     token: string;
-    user: {
-        id: number;
-        name: string;
-        email: string;
-    };
+    user: User;
 }
 
 export const loginUser = async (data: LoginData): Promise<AuthResponse> => {
-    const response = await instance.post<AuthResponse>('/login', data);
-    return response.data;
+    return await instance.post('/login', data);
 };
 
 export const registerUser = async (data: RegisterData): Promise<AuthResponse> => {
-    const response = await instance.post<AuthResponse>('/register', data);
-    return response.data;
+    return await instance.post('/register', data);
 };
 
 export const logoutUser = async (): Promise<void> => {
