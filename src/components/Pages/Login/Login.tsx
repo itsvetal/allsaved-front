@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Link, useNavigate} from "react-router-dom";
-import {type LoginData, loginUser} from "../../../api/auth.ts";
+import {type LoginData, loginUser} from "../../../api";
 import {useAuth} from "../../../context/AuthContext.tsx";
 import {AxiosError} from "axios";
 

@@ -63,10 +63,6 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         isAuth,
     };
 
-    console.log('User:', user);
-    console.log('Token:', token);
-    console.log('isAuth:', isAuth);
-
     return (
         <AuthContext.Provider value={value}>
             {children}
