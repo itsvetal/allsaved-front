@@ -2,10 +2,11 @@ import React from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import {useAuth} from "../../context/AuthContext.tsx";
 import {logoutUser} from "../../api/auth.ts";
+import {routes} from "../../routes/routes.ts";
 
 function Sidebar(): React.ReactElement {
 
-    const { isAuth, user, logout } = useAuth();
+    const {isAuth, user, logout} = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -69,9 +70,17 @@ function Sidebar(): React.ReactElement {
                                     className="bi bi-x bi-middle"></i></a>
                             </div>
                         </div>
-                        <button className="btn btn-primary btn-block btn-lg shadow-lg text-sm" data-bs-toggle="modal"
-                                data-bs-target="#default">Logout
-                        </button>
+                        {isAuth ? (<button className="btn btn-primary btn-block btn-lg shadow-lg text-sm"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#default">Logout
+                                  </button>)
+                                : (<button
+                                className="btn btn-primary btn-block btn-lg shadow-lg text-sm"
+                                onClick={() => navigate(routes.login)}
+                            >
+                                Login
+                                </button>)
+                        }
                     </div>
                     <div className="sidebar-menu">
                         <ul className="menu">
