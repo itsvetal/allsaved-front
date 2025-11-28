@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import {useAuth} from "../../context/AuthContext.tsx";
-import {logoutUser} from "../../api/auth.ts";
+import {logoutUser} from "../../api";
 import {routes} from "../../routes/routes.ts";
 
 function Sidebar(): React.ReactElement {
