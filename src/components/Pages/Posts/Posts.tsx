@@ -1,16 +1,21 @@
 import React, {useEffect} from 'react';
 import {Link} from "react-router-dom";
 import './Posts.scss';
-import {getPosts, type PaginatedPosts, type Post} from "../../../api";
 import Card from "./components/Card/Card.tsx";
+import {useAppDispatch, useAppSelector} from "../../../store/reduxHook.ts";
+import {selectPosts} from "../../../store/Selectors.ts";
+import {postsCreated} from "../../../store/slices/postsSlice.ts";
+import {getPosts, type PaginatedPosts} from "../../../api";
 
 function Posts(): React.ReactElement {
-    const [posts, setPosts] = React.useState<Post[] | null>(null);
+
+    const dispatch = useAppDispatch();
+    const posts = useAppSelector(selectPosts);
 
     const fetchPosts = async () => {
         try {
             const data: PaginatedPosts = await getPosts();
-            setPosts(data.data);
+            dispatch(postsCreated(data.data))
         } catch (error) {
             console.error('Error fetching posts:', error);
         }
@@ -18,7 +23,7 @@ function Posts(): React.ReactElement {
 
     useEffect(() => {
         fetchPosts();
-    }, []);
+    }, [dispatch]);
 
     return (
         <div id="main" className="posts">

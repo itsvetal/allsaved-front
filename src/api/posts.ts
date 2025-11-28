@@ -1,6 +1,6 @@
 import instance from "./axios.ts";
 
-export interface Post {
+export interface IPost {
     id: number;
     userId: number;
     title: string;
@@ -9,7 +9,7 @@ export interface Post {
 }
 
 export interface PaginatedPosts {
-    data: Post[];
+    data: IPost[];
     links: PaginationLink[];
     currentPage: number;
     lastPage: number;
