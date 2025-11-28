@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from "react-router-dom";
 
 interface CardProps {
     id: number;
@@ -8,9 +9,9 @@ interface CardProps {
     thumbnail: string;
 }
 
-function Card({ title, content, thumbnail }: CardProps): React.ReactElement {
+function Card({ id, title, content, thumbnail }: CardProps): React.ReactElement {
     return (
-        <div className="col-md-6 col-sm-12 position-relative post">
+        <div className="col-md-6 col-sm-12 position-relative">
             <div className="card">
                 <div className="position-absolute  top-0"
                      style={{left: '0px', width: '100%', display: 'flex', justifyContent: 'flex-end'}}>
@@ -33,7 +34,9 @@ function Card({ title, content, thumbnail }: CardProps): React.ReactElement {
                     <img className="card-img-bottom img-fluid" src={thumbnail}
                          alt="Card image cap" style={{height: "20rem", objectFit: "cover"}}/>
                     <div className="card-body">
-                        <h4 className="card-title">{title}</h4>
+                        <Link to={`${id}`} className="card-link">
+                            <h4 className="card-title">{title}</h4>
+                        </Link>
                         <p className="card-text">
                             {content}
                         </p>

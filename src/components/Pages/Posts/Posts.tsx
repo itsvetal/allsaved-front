@@ -50,7 +50,7 @@ function Posts(): React.ReactElement {
             </div>
 
             <section id="content-types" className="flex-grow-1">
-                <div className="row">
+                <div className="row posts-list">
 
                     {posts?.map(post => (
                         <Card {...post} key={post.id}/>

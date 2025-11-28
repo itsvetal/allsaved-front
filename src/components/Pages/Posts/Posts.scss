@@ -2,6 +2,12 @@
     margin-left: unset !important;
 }
 
+.posts-list {
+    display: flex;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+}
+
 button {
     border: none;
 }

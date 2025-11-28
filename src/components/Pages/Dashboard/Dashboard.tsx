@@ -1,8 +1,9 @@
 import React from 'react';
+import './Dashboard.scss';
 
 function Dashboard(): React.ReactElement {
     return (
-        <div id="main">
+        <div id="main" className="dashboard">
             <header className="mb-3">
                 <a href="#" className="burger-btn d-block d-xl-none">
                     <i className="bi bi-justify fs-3"></i>
