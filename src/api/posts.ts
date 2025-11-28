@@ -33,3 +33,7 @@ export const getPosts = async (page: number = 1, search: string = '', path: stri
     const params = {page, ...(search && {search})};
     return await instance.get(path, {params});
 }
+
+export const getPost = async (id: number): Promise<IPost> => {
+    return await instance.get(`/posts/${id}`);
+}
