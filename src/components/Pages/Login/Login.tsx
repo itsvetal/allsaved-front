@@ -25,7 +25,7 @@ function Login(): React.ReactElement {
 
     return (
         <div id="auth">
-            <div className="row h-100">
+            <div className="row h-100 flex-row justify-content-center">
                 <div className="col-lg-5 col-12 w-100">
                     <div id="auth-left">
                         <div className="auth-logo">

@@ -15,7 +15,6 @@ function Post(): React.ReactElement {
     const fetchPost = async (id: string) => {
         try {
             const data = await getPost(Number(id));
-            console.log('Data:', data);
             dispatch(postUpdated(data));
         } catch (error) {
             console.error('Error fetching post:', error);
@@ -23,7 +22,6 @@ function Post(): React.ReactElement {
     };
     useEffect(() => {
         if (!postId) {
-            console.log('True')
             return;
         }
        fetchPost((postId));

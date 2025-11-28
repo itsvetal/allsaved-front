@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Link} from "react-router-dom";
 
 interface CardProps {
@@ -10,19 +10,24 @@ interface CardProps {
 }
 
 function Card({ id, title, content, thumbnail }: CardProps): React.ReactElement {
+
+    const [openEditModal, setOpenEditModal] = useState(false);
+    const [openRemoveModal, setOpenRemoveModal] = useState(false);
+
+
     return (
         <div className="col-md-6 col-sm-12 position-relative">
             <div className="card">
                 <div className="position-absolute  top-0"
                      style={{left: '0px', width: '100%', display: 'flex', justifyContent: 'flex-end'}}>
-                    <button className="svg-btn bg-transparent p-1">
+                    <button onClick={(): void => setOpenEditModal(true)} className="svg-btn bg-transparent p-1">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
                              width="24px" fill="#c5c5c5">
                             <path
                                 d="m490-527 37 37 217-217-37-37-217 217ZM200-200h37l233-233-37-37-233 233v37Zm355-205L405-555l167-167-29-29-219 219-56-56 218-219q24-24 56.5-24t56.5 24l29 29 50-50q12-12 28.5-12t28.5 12l93 93q12 12 12 28.5T828-678L555-405ZM270-120H120v-150l285-285 150 150-285 285Z"/>
                         </svg>
                     </button>
-                    <button className="svg-btn bg-transparent p-1">
+                    <button onClick={(): void => setOpenRemoveModal(true)} className="svg-btn bg-transparent p-1">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
                              width="24px" fill="#c5c5c5">
                             <path
