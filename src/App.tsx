@@ -10,6 +10,7 @@ import Register from "./components/Pages/Register/Register.tsx";
 import Profile from "./components/Pages/Profile/Profile.tsx";
 import Posts from "./components/Pages/Posts/Posts.tsx";
 import Post from "./components/Pages/Post/Post.tsx";
+import PostEditModal from "./components/Pages/Posts/components/Card/components/PostEditModal.tsx";
 
 function App() {
     const ProtectedRoute: React.FC<{children: React.ReactNode}> = ({children}) => {
@@ -25,7 +26,7 @@ function App() {
                     <Route path={routes.profile} element={<ProtectedRoute> <Profile /> </ProtectedRoute>} />
                     <Route path={routes.login} element={<Login />} />
                     <Route path={routes.register} element={<Register />} />
-                    <Route path={routes.settings} element={<h1>Settings</h1>} />
+                    <Route path={routes.settings} element={<PostEditModal />} />
                     <Route path={routes.posts} element={<Posts />} />
                     <Route path={`${routes.posts}/:postId`} element={<Post />} />
                 </Route>

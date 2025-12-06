@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         }
 
         try {
-            const response = await instance.get('/user');
+            const response: User = await instance.get('/user');
             setUser(response);
             setIsAuth(true);
         } catch (error) {
@@ -71,6 +71,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
 
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
     const context = React.useContext(AuthContext);
     if (!context) {
