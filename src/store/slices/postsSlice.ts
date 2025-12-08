@@ -8,10 +8,11 @@ export const postsSlice = createSlice({
         postsCreated: postsAdapter.upsertMany,
         postsUpdated: postsAdapter.upsertMany,
         postUpdated: postsAdapter.upsertOne,
+        postCreated: postsAdapter.upsertOne,
         postDeleted: postsAdapter.removeOne
     }
 })
 
-export const {postsCreated, postsUpdated, postDeleted, postUpdated} = postsSlice.actions
+export const {postsUpdated, postDeleted, postUpdated, postCreated} = postsSlice.actions
 
 export default postsSlice.reducer

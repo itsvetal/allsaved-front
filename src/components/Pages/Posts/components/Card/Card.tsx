@@ -17,6 +17,7 @@ interface CardProps {
 function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactElement {
     const {user} = useAuth();
     const isAuthor = user && user.id === userId;
+    // const isAuthor = true;
     const dispatch = useAppDispatch();
     const [formData, setFormData] = useState<IPostForm>({
         title: '',
@@ -37,7 +38,13 @@ function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactEl
 
         try {
             const postData = await updatePost(id, data);
-            dispatch(postUpdated(postData))
+            dispatch(postUpdated(postData));
+            setFormData((prevState) => ({
+                ...prevState,
+                title: '',
+                content: '',
+                thumbnail: null
+            }));
         } catch (error) {
             console.error('Error updating post:', error);
         }
@@ -232,7 +239,7 @@ function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactEl
                                 className="btn btn-danger ms-1"
                                 data-bs-dismiss="modal">
                                 <i className="bx bx-check d-block d-sm-none"></i>
-                                <span className="d-none d-sm-block">Edit</span>
+                                <span className="d-none d-sm-block">Remove</span>
                             </button>
                         </div>
                     </div>

@@ -1,21 +1,25 @@
-import React, {useEffect} from 'react';
-import {Link} from "react-router-dom";
+import React, {useEffect, useState} from 'react';
 import './Posts.scss';
 import Card from "./components/Card/Card.tsx";
 import {useAppDispatch, useAppSelector} from "../../../store/reduxHook.ts";
 import {selectPosts} from "../../../store/Selectors.ts";
-import {postsCreated} from "../../../store/slices/postsSlice.ts";
-import {getPosts, type PaginatedPosts} from "../../../api";
+import {postsUpdated, postUpdated} from "../../../store/slices/postsSlice.ts";
+import {createPost, getPosts, type IPostForm, type PaginatedPosts} from "../../../api";
 
 function Posts(): React.ReactElement {
 
+    const [formData, setFormData] = useState<IPostForm>({
+        title: '',
+        content: '',
+        thumbnail: null,
+    });
     const dispatch = useAppDispatch();
     const posts = useAppSelector(selectPosts);
 
     const fetchPosts = async () => {
         try {
             const data: PaginatedPosts = await getPosts();
-            dispatch(postsCreated(data.data))
+            dispatch(postsUpdated(data.data))
         } catch (error) {
             console.error('Error fetching posts:', error);
         }
@@ -25,53 +29,163 @@ function Posts(): React.ReactElement {
         fetchPosts();
     }, [dispatch]);
 
-    return (
-        <div id="main" className="posts">
-            <header className="mb-3 ">
-                <a href="#" className="burger-btn d-block d-xl-none">
-                    <i className="bi bi-justify fs-3"></i>
-                </a>
-            </header>
+    const submitHandler = async (event: React.FormEvent) => {
+        event.preventDefault();
 
-            <div className="page-title mb-3">
-                <div className="row">
-                    <div className="col-12 col-md-6 order-md-1 w-50% order-last justify-content-start">
-                        <h3 className="text-start">Posts</h3>
+        const data = new FormData();
+        data.append('title', formData.title);
+        data.append('content', formData.content);
+        if (formData.thumbnail) {
+            data.append('thumbnail', formData.thumbnail);
+        }
+        try {
+            const postData = await createPost(data);
+            dispatch(postUpdated(postData));
+            setFormData({
+                title: '',
+                content: '',
+                thumbnail: null,
+            });
+        } catch (error) {
+            console.error('Error creating post:', error);
+        }
+    };
+
+    return (
+        <>
+            <div id="main" className="posts">
+                <header className="mb-3 ">
+                    <a href="#" className="burger-btn d-block d-xl-none">
+                        <i className="bi bi-justify fs-3"></i>
+                    </a>
+                </header>
+
+                <div className="page-title mb-3">
+                    <div className="row justify-content-end">
+                        <div className="col-12 col-md-6 order-md-2 order-first">
+                            <nav aria-label="breadcrumb" className="breadcrumb-header float-start float-lg-end">
+                                <ol className="breadcrumb flex-row align-items-center">
+                                    <li className="breadcrumb-item">
+                                        <button
+                                            className="btn btn-success"
+                                            type="button"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#newPost"
+                                        >
+                                            + New post
+                                        </button>
+                                    </li>
+                                    <li className="breadcrumb-item active" aria-current="page">Posts</li>
+                                </ol>
+                            </nav>
+                        </div>
                     </div>
-                    <div className="col-12 col-md-6 order-md-2 order-first">
-                        <nav aria-label="breadcrumb" className="breadcrumb-header float-start float-lg-end">
-                            <ol className="breadcrumb">
-                                <li className="breadcrumb-item"><Link to="/dashboard">Dashboard</Link></li>
-                                <li className="breadcrumb-item active" aria-current="page">Card</li>
-                            </ol>
-                        </nav>
+                </div>
+
+                <section id="content-types" className="flex-grow-1">
+                    <div className="row posts-list">
+
+                        {posts.length ? (posts?.map(post => (
+                            <Card {...post} key={post.id}/>
+                        )))
+                        : (
+                            <div className="flex-column align-items-center justify-content-center">
+                                <img src="/assets/images/img.png" alt="Posts is not found"/>
+                                <div>No posts found</div>
+                            </div>
+                            )}
+
+                    </div>
+                </section>
+
+                <footer className="flex-shrink-0">
+                    <div className="footer clearfix mb-0 text-muted">
+                        <div className="float-start">
+                            <p>2023 &copy; Mazer</p>
+                        </div>
+                        <div className="float-end">
+                            <p>Crafted with <span className="text-danger"><i
+                                className="bi bi-heart-fill icon-mid"></i></span>
+                                by <a href="https://saugi.me">Saugi</a></p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+
+            <div className="modal fade text-left" id={`newPost`}
+                 role="dialog"
+                 aria-labelledby="myModalLabel33" aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+                     role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h4 className="modal-title" id="myModalLabel33">Create Post</h4>
+                            <button type="button" className="close" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                <i data-feather="x"></i>
+                            </button>
+                        </div>
+                        <form action="#" onSubmit={submitHandler}>
+                            <div className="modal-body edit-modal">
+                                <label htmlFor={`add-title`}>Title: </label>
+                                <div className="form-group w-100">
+                                    <input
+                                        id={`add-title`}
+                                        name="title"
+                                        type="text"
+                                        placeholder="Post title"
+                                        className="form-control"
+                                        value={formData.title}
+                                        onChange={(event) => setFormData((state) => ({
+                                            ...state,
+                                            title: event.target.value
+                                        }))}
+                                    />
+                                </div>
+                                <label htmlFor={`add-content`}>Content: </label>
+                                <div className="form-group w-100">
+                                    <textarea
+                                        id={`add-content`}
+                                        className="form-control"
+                                        rows={3}
+                                        placeholder="Post content"
+                                        value={formData.content}
+                                        onChange={(event) => setFormData((state) => ({
+                                            ...state,
+                                            content: event.target.value
+                                        }))}
+                                    />
+                                </div>
+                                <label htmlFor={`add-file`}></label>
+                                <div className="form-group w-100" style={{display: "flex"}}>
+                                    <input
+                                        id={`add-file`}
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(event) => {
+                                            const file = event.target.files?.[0] ?? null;
+                                            setFormData((state) => ({...state, thumbnail: file}))
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-light-secondary"
+                                        data-bs-dismiss="modal">
+                                    <i className="bx bx-x d-block d-sm-none"></i>
+                                    <span className="d-none d-sm-block">Close</span>
+                                </button>
+                                <button type="submit" className="btn btn-primary ms-1"
+                                        data-bs-dismiss="modal">
+                                    <i className="bx bx-check d-block d-sm-none"></i>
+                                    <span className="d-none d-sm-block">Create</span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-
-            <section id="content-types" className="flex-grow-1">
-                <div className="row posts-list">
-
-                    {posts?.map(post => (
-                        <Card {...post} key={post.id}/>
-                    ))}
-
-                </div>
-            </section>
-
-            <footer className="flex-shrink-0">
-                <div className="footer clearfix mb-0 text-muted">
-                    <div className="float-start">
-                        <p>2023 &copy; Mazer</p>
-                    </div>
-                    <div className="float-end">
-                        <p>Crafted with <span className="text-danger"><i
-                            className="bi bi-heart-fill icon-mid"></i></span>
-                            by <a href="https://saugi.me">Saugi</a></p>
-                    </div>
-                </div>
-            </footer>
-        </div>
+        </>
     );
 }
 

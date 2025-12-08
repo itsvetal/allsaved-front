@@ -44,7 +44,7 @@ export const getPost = async (id: number): Promise<IPost> => {
     return await instance.get(`/posts/${id}`);
 }
 
-export const createPost = async (data: IPost): Promise<IPost> => {
+export const createPost = async (data: FormData): Promise<IPost> => {
     return await instance.post('/posts', data);
 }
 
