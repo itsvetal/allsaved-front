@@ -8,6 +8,12 @@ export interface IPost {
     thumbnail: string;
 }
 
+export interface IPostForm {
+    title: string;
+    content: string;
+    thumbnail: File | null;
+}
+
 export interface PaginatedPosts {
     data: IPost[];
     links: PaginationLink[];
@@ -36,4 +42,13 @@ export const getPosts = async (page: number = 1, search: string = '', path: stri
 
 export const getPost = async (id: number): Promise<IPost> => {
     return await instance.get(`/posts/${id}`);
+}
+
+export const createPost = async (data: IPost): Promise<IPost> => {
+    return await instance.post('/posts', data);
+}
+
+export const updatePost = async (id: number, data: FormData): Promise<IPost> => {
+    data.append('_method', 'PUT');
+    return await instance.post(`/posts/${id}`, data, {headers: {'Content-Type': 'multipart/form-data'}});
 }

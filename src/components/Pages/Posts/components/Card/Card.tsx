@@ -1,7 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Link} from "react-router-dom";
 import './Card.scss';
 import {useAuth} from "../../../../../context/AuthContext.tsx";
+import {type IPostForm, updatePost} from "../../../../../api";
+import {useAppDispatch} from "../../../../../store/reduxHook.ts";
+import {postUpdated} from "../../../../../store/slices/postsSlice.ts";
 
 interface CardProps {
     id: number;
@@ -12,23 +15,43 @@ interface CardProps {
 }
 
 function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactElement {
-    const { user } = useAuth();
+    const {user} = useAuth();
+    const isAuthor = user && user.id === userId;
+    const dispatch = useAppDispatch();
+    const [formData, setFormData] = useState<IPostForm>({
+        title: '',
+        content: '',
+        thumbnail: null,
+    });
 
-    // const [openEditModal, setOpenEditModal] = useState(false);
-    // const [openRemoveModal, setOpenRemoveModal] = useState(false);
+    const submitHandler = async (event: React.FormEvent) => {
 
-
-    const submitHandler = (event: React.FormEvent) => {
         event.preventDefault();
-        console.log('Click card: ', id);
+
+        const data = new FormData();
+        data.append('title', formData.title);
+        data.append('content', formData.content);
+        if (formData.thumbnail) {
+            data.append('thumbnail', formData.thumbnail);
+        }
+
+        try {
+            const postData = await updatePost(id, data);
+            dispatch(postUpdated(postData))
+        } catch (error) {
+            console.error('Error updating post:', error);
+        }
     };
+
     return (
         <>
             <div className="col-md-6 col-sm-12 position-relative">
                 <div className="card">
                     <div className="position-absolute  top-0"
                          style={{left: '0px', width: '100%', display: 'flex', justifyContent: 'flex-end'}}>
-                        <button data-bs-toggle="modal" data-bs-target={user?.id === userId ? `#inlineForm-${id}` : `#notOwner`}
+                        <button data-bs-toggle="modal"
+                                // data-bs-target={user?.id === userId ? `#inlineForm-${id}` : `#notOwner`}
+                                data-bs-target={`#inlineForm-${id}`}
                                 className="svg-btn bg-transparent p-1">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
                                  width="24px" fill="#c5c5c5">
@@ -91,9 +114,15 @@ function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactEl
                             <div className="modal-body edit-modal">
                                 <label htmlFor={`title-${id}`}>Title: </label>
                                 <div className="form-group w-100">
-                                    <input id={`title-${id}`} type="text"
-                                           placeholder="Post title"
-                                           className="form-control"/>
+                                    <input
+                                        id={`title-${id}`}
+                                        name="title"
+                                        type="text"
+                                        placeholder="Post title"
+                                        className="form-control"
+                                        value={formData.title}
+                                        onChange={(event) => setFormData((state) => ({...state, title: event.target.value}))}
+                                    />
                                 </div>
                                 <label htmlFor={`content-${id}`}>Content: </label>
                                 <div className="form-group w-100">
@@ -102,11 +131,21 @@ function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactEl
                                         className="form-control"
                                         rows={3}
                                         placeholder="Post content"
+                                        value={formData.content}
+                                        onChange={(event) => setFormData((state) => ({...state, content: event.target.value}))}
                                     />
                                 </div>
                                 <label htmlFor={`file-${id}`}></label>
                                 <div className="form-group w-100" style={{display: "flex"}}>
-                                    <input id={`file-${id}`} type="file"/>
+                                    <input
+                                        id={`file-${id}`}
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(event) => {
+                                            const file = event.target.files?.[0] ?? null;
+                                            setFormData((state) => ({...state, thumbnail: file}))
+                                        }}
+                                    />
                                 </div>
                             </div>
                             <div className="modal-footer">

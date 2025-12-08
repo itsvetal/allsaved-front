@@ -3,9 +3,6 @@ import {API_URL} from "./constants.ts";
 
 const instance = axios.create({
     baseURL: API_URL,
-    headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-    }
 });
 
 instance.interceptors.request.use((config) => {
