@@ -2,9 +2,9 @@ import React, {useState} from 'react';
 import {Link} from "react-router-dom";
 import './Card.scss';
 import {useAuth} from "../../../../../context/AuthContext.tsx";
-import {type IPostForm, updatePost} from "../../../../../api";
+import {deletePost, type IPostForm, updatePost} from "../../../../../api";
 import {useAppDispatch} from "../../../../../store/reduxHook.ts";
-import {postUpdated} from "../../../../../store/slices/postsSlice.ts";
+import {postDeleted, postUpdated} from "../../../../../store/slices/postsSlice.ts";
 
 interface CardProps {
     id: number;
@@ -43,6 +43,11 @@ function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactEl
         }
     };
 
+    const removePostHandler = async () => {
+        await deletePost(id);
+        dispatch(postDeleted(id));
+    };
+
     return (
         <>
             <div className="col-md-6 col-sm-12 position-relative">
@@ -50,8 +55,8 @@ function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactEl
                     <div className="position-absolute  top-0"
                          style={{left: '0px', width: '100%', display: 'flex', justifyContent: 'flex-end'}}>
                         <button data-bs-toggle="modal"
-                                // data-bs-target={user?.id === userId ? `#inlineForm-${id}` : `#notOwner`}
-                                data-bs-target={`#inlineForm-${id}`}
+                                data-bs-target={isAuthor ? `#inlineForm-${id}` : `#notOwner`}
+                            // data-bs-target={`#inlineForm-${id}`}
                                 className="svg-btn bg-transparent p-1">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
                                  width="24px" fill="#c5c5c5">
@@ -59,7 +64,10 @@ function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactEl
                                     d="m490-527 37 37 217-217-37-37-217 217ZM200-200h37l233-233-37-37-233 233v37Zm355-205L405-555l167-167-29-29-219 219-56-56 218-219q24-24 56.5-24t56.5 24l29 29 50-50q12-12 28.5-12t28.5 12l93 93q12 12 12 28.5T828-678L555-405ZM270-120H120v-150l285-285 150 150-285 285Z"/>
                             </svg>
                         </button>
-                        <button className="svg-btn bg-transparent p-1">
+                        <button className="svg-btn bg-transparent p-1"
+                                data-bs-toggle="modal"
+                                data-bs-target={`#removeModal-${id}`}
+                        >
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
                                  width="24px" fill="#c5c5c5">
                                 <path
@@ -121,7 +129,10 @@ function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactEl
                                         placeholder="Post title"
                                         className="form-control"
                                         value={formData.title}
-                                        onChange={(event) => setFormData((state) => ({...state, title: event.target.value}))}
+                                        onChange={(event) => setFormData((state) => ({
+                                            ...state,
+                                            title: event.target.value
+                                        }))}
                                     />
                                 </div>
                                 <label htmlFor={`content-${id}`}>Content: </label>
@@ -132,7 +143,10 @@ function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactEl
                                         rows={3}
                                         placeholder="Post content"
                                         value={formData.content}
-                                        onChange={(event) => setFormData((state) => ({...state, content: event.target.value}))}
+                                        onChange={(event) => setFormData((state) => ({
+                                            ...state,
+                                            content: event.target.value
+                                        }))}
                                     />
                                 </div>
                                 <label htmlFor={`file-${id}`}></label>
@@ -157,7 +171,7 @@ function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactEl
                                 <button type="submit" className="btn btn-primary ms-1"
                                         data-bs-dismiss="modal">
                                     <i className="bx bx-check d-block d-sm-none"></i>
-                                    <span className="d-none d-sm-block">login</span>
+                                    <span className="d-none d-sm-block">Edit</span>
                                 </button>
                             </div>
                         </form>
@@ -170,7 +184,7 @@ function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactEl
                 <div className="modal-dialog modal-dialog-scrollable" role="document">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title" id="myModalLabel1">Attention</h5>
+                            <h5 className="modal-title" id="myModalLabel1">Info</h5>
                             <button type="button" className="close rounded-pill" data-bs-dismiss="modal"
                                     aria-label="Close">
                                 <i data-feather="x"></i>
@@ -185,6 +199,40 @@ function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactEl
                             <button type="button" className="btn" data-bs-dismiss="modal">
                                 <i className="bx bx-x d-block d-sm-none"></i>
                                 <span className="d-none d-sm-block">Close</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="modal fade " id={`removeModal-${id}`} role="dialog"
+                 aria-labelledby="myModalLabel1">
+                <div className="modal-dialog modal-dialog-scrollable" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="myModalLabel1">Attention</h5>
+                            <button type="button" className="close rounded-pill" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                <i data-feather="x"></i>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <p>
+                                Do you really want to delete this post?
+                            </p>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn" data-bs-dismiss="modal">
+                                <i className="bx bx-x d-block d-sm-none"></i>
+                                <span className="d-none d-sm-block">Close</span>
+                            </button>
+                            <button
+                                onClick={removePostHandler}
+                                type="button"
+                                className="btn btn-danger ms-1"
+                                data-bs-dismiss="modal">
+                                <i className="bx bx-check d-block d-sm-none"></i>
+                                <span className="d-none d-sm-block">Edit</span>
                             </button>
                         </div>
                     </div>

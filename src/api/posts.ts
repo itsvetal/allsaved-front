@@ -52,3 +52,7 @@ export const updatePost = async (id: number, data: FormData): Promise<IPost> => 
     data.append('_method', 'PUT');
     return await instance.post(`/posts/${id}`, data, {headers: {'Content-Type': 'multipart/form-data'}});
 }
+
+export const deletePost = async (id: number): Promise<void> => {
+    return await instance.delete(`/posts/${id}`);
+}
