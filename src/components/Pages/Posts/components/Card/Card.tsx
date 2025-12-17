@@ -8,15 +8,15 @@ import {postDeleted, postUpdated} from "../../../../../store/slices/postsSlice.t
 
 interface CardProps {
     id: number;
-    userId: number;
+    user_id: number;
     title: string;
     content: string;
     thumbnail: string;
 }
 
-function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactElement {
+function Card({id, user_id, title, content, thumbnail}: CardProps): React.ReactElement {
     const {user} = useAuth();
-    const isAuthor = user && user.id === userId;
+    const isAuthor = user && user.id === user_id;
     // const isAuthor = true;
     const dispatch = useAppDispatch();
     const [formData, setFormData] = useState<IPostForm>({
@@ -73,7 +73,7 @@ function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactEl
                         </button>
                         <button className="svg-btn bg-transparent p-1"
                                 data-bs-toggle="modal"
-                                data-bs-target={`#removeModal-${id}`}
+                                data-bs-target={isAuthor ? `#removeModal-${id}` : `#notOwner`}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
                                  width="24px" fill="#c5c5c5">
@@ -119,7 +119,7 @@ function Card({id, userId, title, content, thumbnail}: CardProps): React.ReactEl
                      role="document">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h4 className="modal-title" id="myModalLabel33">Edit Post - {id}</h4>
+                            <h4 className="modal-title" id="myModalLabel33">Edit Post</h4>
                             <button type="button" className="close" data-bs-dismiss="modal"
                                     aria-label="Close">
                                 <i data-feather="x"></i>

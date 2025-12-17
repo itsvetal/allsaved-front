@@ -2,7 +2,7 @@ import instance from "./axios.ts";
 
 export interface IPost {
     id: number;
-    userId: number;
+    user_id: number;
     title: string;
     content: string;
     thumbnail: string;
@@ -17,8 +17,8 @@ export interface IPostForm {
 export interface PaginatedPosts {
     data: IPost[];
     links: PaginationLink[];
-    currentPage: number;
-    lastPage: number;
+    current_page: number;
+    last_page: number;
     first_page_url: string;
     last_page_url: string;
     from: number;

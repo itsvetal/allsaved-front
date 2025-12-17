@@ -13,12 +13,17 @@ function Posts(): React.ReactElement {
         content: '',
         thumbnail: null,
     });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [search, setSearch] = useState('');
     const dispatch = useAppDispatch();
     const posts = useAppSelector(selectPosts);
 
     const fetchPosts = async () => {
         try {
-            const data: PaginatedPosts = await getPosts();
+            const data: PaginatedPosts = await getPosts(currentPage, search);
+            setTotalPages(data.last_page);
+            setCurrentPage(data.current_page);
             dispatch(postsUpdated(data.data))
         } catch (error) {
             console.error('Error fetching posts:', error);
@@ -50,6 +55,8 @@ function Posts(): React.ReactElement {
             console.error('Error creating post:', error);
         }
     };
+
+    console.log('Current Page:', currentPage);
 
     return (
         <>
@@ -96,6 +103,32 @@ function Posts(): React.ReactElement {
                             )}
 
                     </div>
+                    {totalPages > 1 && (
+                        <nav aria-label="Page navigation example">
+                            <ul className="pagination justify-content-center">
+                                <li className="page-item disabled">
+                                    <a className="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                {totalPages > 1 && Array.from({length: totalPages}, (_, index) => (
+                                    <li key={index} className={`page-item ${index + 1 === currentPage ? 'active' : ''}`}>
+                                        <button className="page-link" onClick={() => setCurrentPage(index + 1)}>
+                                            {index + 1}
+                                        </button>
+                                    </li>
+                                ))}
+                                {/*<li className="page-item"><a className="page-link" href="#">1</a></li>*/}
+                                {/*<li className="page-item"><a className="page-link" href="#">2</a></li>*/}
+                                {/*<li className="page-item"><a className="page-link" href="#">3</a></li>*/}
+                                <li className="page-item">
+                                    <a className="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    )}
                 </section>
 
                 <footer className="flex-shrink-0">
